@@ -1604,7 +1604,9 @@ const core = __importStar(__webpack_require__(470));
 // import {execSync} from 'child_process'
 const log_1 = __webpack_require__(663);
 const child_process_1 = __webpack_require__(129);
-const deployLocation = '/tmp/deploy-branch-temp';
+const deployFolderName = 'deploy-branch-root';
+const deployLocationRoot = '/tmp';
+const deployLocation = `${deployLocationRoot}/${deployFolderName}`;
 const requireEnvVar = (envVar) => {
     const requested = process.env[envVar];
     if (requested) {
@@ -1669,8 +1671,7 @@ function run() {
             const remoteRepo = `https://github.com/${repo}.git`;
             const branch = requireInput('branch');
             const provider = requireInput('provider');
-            runCommand(`mkdir -p ${deployLocation}`);
-            runCommand(`cd ${deployLocation} && git clone --depth=1 ${remoteRepo} ${branch}`, `Could not checkout branch ${branch}. Are you sure it exists?`);
+            runCommand(`git clone --single-branch --branch ${branch} --depth=1 ${remoteRepo} ${deployLocation}`, `Could not checkout branch ${branch}. Are you sure it exists?`);
             if (provider === 'NETLIFY') {
                 deployNetlify();
             }

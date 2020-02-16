@@ -3,7 +3,9 @@ import * as core from '@actions/core'
 import {logError, logSuccess, logInfo} from './log'
 import {execSync} from 'child_process'
 
-const deployLocation = '/tmp/deploy-branch-temp'
+const deployFolderName = 'deploy-branch-root'
+const deployLocationRoot = '/tmp'
+const deployLocation = `${deployLocationRoot}/${deployFolderName}`
 
 const requireEnvVar = (envVar: string): string => {
   const requested = process.env[envVar]
@@ -72,9 +74,8 @@ async function run(): Promise<void> {
     const branch = requireInput('branch')
     const provider = requireInput('provider')
 
-    runCommand(`mkdir -p ${deployLocation}`)
     runCommand(
-      `cd ${deployLocation} && git clone --depth=1 ${remoteRepo} ${branch}`,
+      `git clone --single-branch --branch ${branch} --depth=1 ${remoteRepo} ${deployLocation}`,
       `Could not checkout branch ${branch}. Are you sure it exists?`
     )
 
