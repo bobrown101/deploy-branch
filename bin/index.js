@@ -1657,8 +1657,7 @@ const deployNetlify = () => {
     const siteID = requireInput('netlify-site-id');
     process.env['NETLIFY_AUTH_TOKEN'] = token;
     process.env['NETLIFY_SITE_ID'] = siteID;
-    runCommand('ls -al');
-    child_process_1.execSync(`cd ${deployLocation} && npx netlify-cli deploy --dir .`);
+    runCommand(`cd ${deployLocation} && ls -al && npx netlify-cli deploy --dir .`);
     // TODO - --dir . is deploying cov files too
     // comment deploy link somewhere for user
     // make site publish (probably just as simple as adding --prod)
