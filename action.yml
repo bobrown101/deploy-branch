@@ -5,7 +5,7 @@ inputs:
     description: 'The git branch that you would like to deploy'
     required: true
   provider:
-    description: 'The provider you would like to deploy to (ex: ZEIT, NETLIFY)'
+    description: 'The provider you would like to deploy to (ex: NETLIFY)'
     required: true
 runs:
   using: 'node12'

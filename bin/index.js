@@ -1604,14 +1604,6 @@ const core = __importStar(__webpack_require__(470));
 // import {execSync} from 'child_process'
 const log_1 = __webpack_require__(663);
 const child_process_1 = __webpack_require__(129);
-const failWithError = (msg, error) => {
-    if (error) {
-        console.error(error.toString());
-    }
-    log_1.logError(msg);
-    core.setFailed(msg);
-    process.exit(1);
-};
 const requireEnvVar = (envVar) => {
     const requested = process.env[envVar];
     if (requested) {
@@ -1619,7 +1611,21 @@ const requireEnvVar = (envVar) => {
     }
     else {
         const msg = `The enviornment variable "${envVar}" does not exist. It is required to run deploy-branch`;
-        return failWithError(msg);
+        log_1.logError(msg);
+        core.setFailed(msg);
+        process.exit(1);
+    }
+};
+const runCommand = (cmd, errorMsg) => {
+    try {
+        console.log(child_process_1.execSync(cmd).toString());
+    }
+    catch (error) {
+        console.error(error);
+        const msg = errorMsg || error.toString();
+        log_1.logError(msg);
+        core.setFailed(msg);
+        process.exit(1);
     }
 };
 const requireInput = (input) => {
@@ -1629,30 +1635,40 @@ const requireInput = (input) => {
     }
     else {
         const msg = `The input variable "${input}" does not exist. It is required to run deploy-branch`;
-        return failWithError(msg);
+        log_1.logError(msg);
+        core.setFailed(msg);
+        process.exit(1);
     }
 };
-const deployZEIT = (branch) => {
-    console.log(JSON.stringify(process.env, null, 4));
-    const token = requireEnvVar('INPUT_NOW-TOKEN');
-    try {
-        console.log(child_process_1.execSync(`git checkout remotes/origin/${branch}`).toString());
-        child_process_1.execSync(`npx now --token ${token}`);
-    }
-    catch (error) {
-        failWithError('Could not deploy to zeit', error);
-    }
+// const deployZEIT = (branch: string): void => {
+//   console.log(JSON.stringify(process.env, null, 4))
+//   const token = requireEnvVar('INPUT_NOW-TOKEN')
+//   try {
+//     console.log(execSync(`git checkout remotes/origin/${branch}`).toString())
+//     execSync(`npx now --token ${token}`)
+//   } catch (error) {
+//     failWithError('Could not deploy to zeit', error)
+//   }
+// }
+const deployNetlify = () => {
+    log_1.logInfo('Deploying to netlify...');
+    const token = requireEnvVar('INPUT_NETLIFY_AUTH_TOKEN');
+    const siteID = requireEnvVar('INPUT_NETLIFY_SITE_ID');
+    process.env['NETLIFY_AUTH_TOKEN'] = token;
+    process.env['NETLIFY_SITE_ID'] = siteID;
+    child_process_1.execSync(`npx netlify deploy`);
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const branch = requireInput('branch');
             const provider = requireInput('provider');
-            if (provider === 'ZEIT') {
-                deployZEIT(branch);
+            runCommand(`git checkout remotes/origin/${branch}`, `Could not checkout branch ${branch}. Are you sure it exists?`);
+            if (provider === 'NETLIFY') {
+                deployNetlify();
             }
             else {
-                failWithError(`Provider ${provider} is currently not supported`);
+                log_1.logError(`Provider ${provider} is currently not supported`);
             }
             const msg = `Successfully deployed branch!`;
             log_1.logSuccess(msg);
