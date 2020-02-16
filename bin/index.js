@@ -1666,10 +1666,8 @@ const deployNetlify = () => {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const githubActor = requireEnvVar('GITHUB_ACTOR');
-            const githubToken = requireEnvVar('INPUT_GITHUB-TOKEN');
             const repo = requireEnvVar('GITHUB_REPOSITORY');
-            const remoteRepo = `https://${githubActor}:${githubToken}@github.com/${repo}.git`;
+            const remoteRepo = `https://github.com/${repo}.git`;
             const branch = requireInput('branch');
             const provider = requireInput('provider');
             runCommand(`cd ${deployLocation} && git clone --depth=1 ${remoteRepo} ${branch}`, `Could not checkout branch ${branch}. Are you sure it exists?`);
