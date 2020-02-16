@@ -52,7 +52,7 @@ const requireInput = (input: string): string => {
 
 const deployNetlify = (): void => {
   logInfo('Deploying to netlify...')
-  const token = requireEnvVar('INPUT_NETLIFY_AUTH_TOKEN')
+  const token = requireEnvVar('INPUT_NETLIFY-AUTH-TOKEN')
   const siteID = requireInput('netlify-site-id')
   process.env['NETLIFY_AUTH_TOKEN'] = token
   process.env['NETLIFY_SITE_ID'] = siteID
