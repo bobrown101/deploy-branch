@@ -73,7 +73,7 @@ async function run(): Promise<void> {
     const branch = requireInput('branch')
     const provider = requireInput('provider')
 
-    runCommand(`mkdir -= ${deployLocation}`)
+    runCommand(`mkdir -p ${deployLocation}`)
     runCommand(
       `cd ${deployLocation} && git clone --depth=1 ${remoteRepo} ${branch}`,
       `Could not checkout branch ${branch}. Are you sure it exists?`
