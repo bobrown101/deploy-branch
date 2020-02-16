@@ -1656,7 +1656,7 @@ const deployNetlify = () => {
     const siteID = requireInput('netlify-site-id');
     process.env['NETLIFY_AUTH_TOKEN'] = token;
     process.env['NETLIFY_SITE_ID'] = siteID;
-    child_process_1.execSync(`npx netlify deploy`);
+    child_process_1.execSync(`npx netlify-cli deploy`);
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
