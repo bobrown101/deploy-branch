@@ -1670,6 +1670,7 @@ function run() {
             const remoteRepo = `https://github.com/${repo}.git`;
             const branch = requireInput('branch');
             const provider = requireInput('provider');
+            runCommand(`mkdir -= ${deployLocation}`);
             runCommand(`cd ${deployLocation} && git clone --depth=1 ${remoteRepo} ${branch}`, `Could not checkout branch ${branch}. Are you sure it exists?`);
             if (provider === 'NETLIFY') {
                 deployNetlify();
