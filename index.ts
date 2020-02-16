@@ -43,27 +43,14 @@ const requireInput = (input: string): string => {
   }
 }
 
-// const deployZEIT = (branch: string): void => {
-//   console.log(JSON.stringify(process.env, null, 4))
-//   const token = requireEnvVar('INPUT_NOW-TOKEN')
-//   try {
-//     console.log(execSync(`git checkout remotes/origin/${branch}`).toString())
-//     execSync(`npx now --token ${token}`)
-//   } catch (error) {
-//     failWithError('Could not deploy to zeit', error)
-//   }
-// }
-
 const deployNetlify = (): void => {
   logInfo('Deploying to netlify...')
   const token = requireEnvVar('INPUT_NETLIFY-AUTH-TOKEN')
   const siteID = requireInput('netlify-site-id')
   process.env['NETLIFY_AUTH_TOKEN'] = token
   process.env['NETLIFY_SITE_ID'] = siteID
-  runCommand(`cd ${deployLocation} && ls -al && npx netlify-cli deploy --dir .`)
-  // TODO - --dir . is deploying cov files too
-  // comment deploy link somewhere for user
-  // make site publish (probably just as simple as adding --prod)
+  runCommand(`cd ${deployLocation} && npx netlify-cli deploy --dir . --prod`)
+  logSuccess("Successfully deployed to netlify!")
 }
 
 async function run(): Promise<void> {
@@ -84,9 +71,6 @@ async function run(): Promise<void> {
     } else {
       logError(`Provider ${provider} is currently not supported`)
     }
-
-    const msg = `Successfully deployed branch!`
-    logSuccess(msg)
   } catch (error) {
     core.setFailed(error.message)
   }
