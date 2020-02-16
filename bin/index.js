@@ -1604,6 +1604,7 @@ const core = __importStar(__webpack_require__(470));
 // import {execSync} from 'child_process'
 const log_1 = __webpack_require__(663);
 const child_process_1 = __webpack_require__(129);
+const deployLocation = '/tmp/deploy-branch-temp';
 const requireEnvVar = (envVar) => {
     const requested = process.env[envVar];
     if (requested) {
@@ -1656,8 +1657,8 @@ const deployNetlify = () => {
     const siteID = requireInput('netlify-site-id');
     process.env['NETLIFY_AUTH_TOKEN'] = token;
     process.env['NETLIFY_SITE_ID'] = siteID;
-    runCommand("ls -al");
-    child_process_1.execSync(`npx netlify-cli deploy --dir .`);
+    runCommand('ls -al');
+    child_process_1.execSync(`cd ${deployLocation} && npx netlify-cli deploy --dir .`);
     // TODO - --dir . is deploying cov files too
     // comment deploy link somewhere for user
     // make site publish (probably just as simple as adding --prod)
@@ -1665,9 +1666,13 @@ const deployNetlify = () => {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const githubActor = requireEnvVar('GITHUB_ACTOR');
+            const githubToken = requireEnvVar('INPUT_GITHUB-TOKEN');
+            const repo = requireEnvVar('GITHUB_REPOSITORY');
+            const remoteRepo = `https://${githubActor}:${githubToken}@github.com/${repo}.git`;
             const branch = requireInput('branch');
             const provider = requireInput('provider');
-            runCommand(`git checkout remotes/origin/${branch}`, `Could not checkout branch ${branch}. Are you sure it exists?`);
+            runCommand(`cd ${deployLocation} && git clone --depth=1 ${remoteRepo} ${branch}`, `Could not checkout branch ${branch}. Are you sure it exists?`);
             if (provider === 'NETLIFY') {
                 deployNetlify();
             }

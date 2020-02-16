@@ -3,6 +3,8 @@ import * as core from '@actions/core'
 import {logError, logSuccess, logInfo} from './log'
 import {execSync} from 'child_process'
 
+const deployLocation = '/tmp/deploy-branch-temp'
+
 const requireEnvVar = (envVar: string): string => {
   const requested = process.env[envVar]
   if (requested) {
@@ -56,21 +58,28 @@ const deployNetlify = (): void => {
   const siteID = requireInput('netlify-site-id')
   process.env['NETLIFY_AUTH_TOKEN'] = token
   process.env['NETLIFY_SITE_ID'] = siteID
-  runCommand("ls -al")
-  execSync(`npx netlify-cli deploy --dir .`)
+  runCommand('ls -al')
+  execSync(`cd ${deployLocation} && npx netlify-cli deploy --dir .`)
   // TODO - --dir . is deploying cov files too
   // comment deploy link somewhere for user
   // make site publish (probably just as simple as adding --prod)
-
 }
 
 async function run(): Promise<void> {
   try {
+
+
+    const githubActor = requireEnvVar('GITHUB_ACTOR')
+    const githubToken = requireEnvVar('INPUT_GITHUB-TOKEN')
+    const repo = requireEnvVar('GITHUB_REPOSITORY')
+    const remoteRepo = `https://${githubActor}:${githubToken}@github.com/${repo}.git`
+
     const branch = requireInput('branch')
     const provider = requireInput('provider')
 
+
     runCommand(
-      `git checkout remotes/origin/${branch}`,
+      `cd ${deployLocation} && git clone --depth=1 ${remoteRepo} ${branch}`,
       `Could not checkout branch ${branch}. Are you sure it exists?`
     )
 
