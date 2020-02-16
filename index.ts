@@ -1,9 +1,12 @@
 import * as core from '@actions/core'
 // import {execSync} from 'child_process'
 import {logError, logSuccess} from './log'
+import {execSync} from 'child_process'
 
 const failWithError = (msg: string, error?: Error): string => {
-  console.error(error || msg)
+  if (error) {
+    console.error(error.toString())
+  }
   logError(msg)
   core.setFailed(msg)
   process.exit(1)
@@ -31,9 +34,15 @@ const requireInput = (input: string): string => {
 
 const deployZEIT = (branch: string): void => {
   console.log(JSON.stringify(process.env, null, 4))
-  console.log('branch', branch)
-  const token = requireEnvVar('NOW_TOKEN')
-  console.log('token', token)
+  const token = requireEnvVar('INPUT_NOW-TOKEN')
+  try {
+    console.log(
+      execSync(`git checkout remotes/origin/${branch}`).toString()
+    )
+    execSync(`npx now --token ${token}`)
+  } catch (error) {
+    failWithError('Could not deploy to zeit', error)
+  }
 }
 
 async function run(): Promise<void> {

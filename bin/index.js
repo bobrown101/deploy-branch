@@ -57,6 +57,13 @@ module.exports = require("os");
 
 /***/ }),
 
+/***/ 129:
+/***/ (function(module) {
+
+module.exports = require("child_process");
+
+/***/ }),
+
 /***/ 236:
 /***/ (function(module) {
 
@@ -1596,8 +1603,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 // import {execSync} from 'child_process'
 const log_1 = __webpack_require__(663);
+const child_process_1 = __webpack_require__(129);
 const failWithError = (msg, error) => {
-    console.error(error || msg);
+    if (error) {
+        console.error(error.toString());
+    }
     log_1.logError(msg);
     core.setFailed(msg);
     process.exit(1);
@@ -1624,9 +1634,14 @@ const requireInput = (input) => {
 };
 const deployZEIT = (branch) => {
     console.log(JSON.stringify(process.env, null, 4));
-    console.log('branch', branch);
-    const token = requireEnvVar('NOW_TOKEN');
-    console.log('token', token);
+    const token = requireEnvVar('INPUT_NOW-TOKEN');
+    try {
+        console.log(child_process_1.execSync(`git checkout remotes/origin/${branch}`).toString());
+        child_process_1.execSync(`npx now --token ${token}`);
+    }
+    catch (error) {
+        failWithError('Could not deploy to zeit', error);
+    }
 };
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
