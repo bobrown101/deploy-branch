@@ -1,0 +1,12 @@
+name: 'deploy-branch'
+description: "Automatically deploy the specified branch to the hosting provider of your choice"
+inputs:
+  branch:
+    description: 'The git branch that you would like to deploy'
+    required: true
+  provider:
+    description: 'The provider you would like to deploy to (ex: ZEIT, NETLIFY)'
+    required: true
+runs:
+  using: 'node12'
+  main: 'bin/index.js'

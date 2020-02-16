@@ -1,0 +1,72 @@
+{
+  "name": "deploy-branch",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bobrown101/deploy-branch.git"
+  },
+  "keywords": [],
+  "author": "Brady Brown <bobrown101@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bobrown101/deploy-branch/issues"
+  },
+  "homepage": "https://github.com/bobrown101/deploy-branch#readme",
+  "dependencies": {
+    "@actions/core": "^1.2.0",
+    "@types/node-emoji": "^1.8.1",
+    "husky": "^4.2.3",
+    "node-emoji": "^1.10.0",
+    "version-resource": "^1.1.3"
+  },
+  "scripts": {
+    "build": "ncc build -o bin",
+    "format": "prettier --write **/*.ts",
+    "lint": "eslint ./**/*.ts",
+    "all": "npm run build && npm run format && npm run lint"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "@types/node": "^12.7.12",
+    "@typescript-eslint/parser": "^2.8.0",
+    "@zeit/ncc": "^0.20.5",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.1.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-github": "^2.0.0",
+    "eslint-plugin-jest": "^22.21.0",
+    "js-yaml": "^3.13.1",
+    "prettier": "^1.19.1",
+    "typescript": "^3.6.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run all && git add bin",
+      "prepare-commit-msg": "exec < /dev/tty && git cz --hook || true",
+      "commit-msg": "commitlint -E  HUSKY_GIT_PARAMS"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ],
+    "rules": {
+      "subject-case": [
+        2,
+        "never",
+        [
+          "start-case",
+          "pascal-case"
+        ]
+      ]
+    }
+  }
+}
