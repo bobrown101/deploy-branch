@@ -56,7 +56,7 @@ const deployNetlify = (): void => {
   const siteID = requireInput('netlify-site-id')
   process.env['NETLIFY_AUTH_TOKEN'] = token
   process.env['NETLIFY_SITE_ID'] = siteID
-  execSync(`npx netlify-cli deploy`)
+  execSync(`npx netlify-cli deploy --dir .`)
 }
 
 async function run(): Promise<void> {
