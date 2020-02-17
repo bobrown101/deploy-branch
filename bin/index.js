@@ -4097,6 +4097,9 @@ const requireEnvVar = (envVar) => {
         process.exit(1);
     }
 };
+const envVar = (lookupVar) => {
+    return process.env[lookupVar];
+};
 const runCommand = (cmd, errorMsg) => {
     try {
         const result = child_process_1.execSync(cmd).toString();
@@ -4135,18 +4138,23 @@ const deployNetlify = () => {
 };
 const commentOnCommit = (comment) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const inputs = {
-            token: requireEnvVar('INPUT_GITHUB-TOKEN'),
-            body: comment
-        };
-        core.debug(`Inputs: ${JSON.stringify(inputs, null, 4)}`);
-        const sha = process.env.GITHUB_SHA;
-        core.debug(`SHA: ${sha}`);
-        yield axios_1.default.post(`/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`, {
-            body: inputs.body
-        }, {
-            headers: { authorization: `token ${inputs.token}` }
-        });
+        if (envVar('INPUT_GITHUB-TOKEN')) {
+            const inputs = {
+                token: requireEnvVar('INPUT_GITHUB-TOKEN'),
+                body: comment
+            };
+            core.debug(`Inputs: ${JSON.stringify(inputs, null, 4)}`);
+            const sha = process.env.GITHUB_SHA;
+            core.debug(`SHA: ${sha}`);
+            yield axios_1.default.post(`/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`, {
+                body: inputs.body
+            }, {
+                headers: { authorization: `token ${inputs.token}` }
+            });
+        }
+        else {
+            log_1.logWarn('Could not comment on commit with deployment information because your github token was not found. If you would like this feature please add " with: github-token: "<token>" " to your github actions .yml file');
+        }
     }
     catch (error) {
         core.debug(JSON.stringify(error, null, 4));

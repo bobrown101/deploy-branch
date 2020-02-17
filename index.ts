@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import axios from 'axios'
-import {logError, logSuccess, logInfo} from './log'
+import {logError, logSuccess, logInfo, logWarn} from './log'
 import {execSync} from 'child_process'
 
 const deployFolderName = 'deploy-branch-root'
@@ -17,6 +17,10 @@ const requireEnvVar = (envVar: string): string => {
     core.setFailed(msg)
     process.exit(1)
   }
+}
+
+const envVar = (envVar: string): string | undefined => {
+  return process.env[envVar]
 }
 
 const runCommand = (cmd: string, errorMsg?: string): string => {
@@ -60,24 +64,30 @@ const deployNetlify = (): string => {
 
 const commentOnCommit = async (comment: string): Promise<void> => {
   try {
-    const inputs = {
-      token: requireEnvVar('INPUT_GITHUB-TOKEN'),
-      body: comment
-    }
-    core.debug(`Inputs: ${JSON.stringify(inputs, null, 4)}`)
-
-    const sha = process.env.GITHUB_SHA
-    core.debug(`SHA: ${sha}`)
-
-    await axios.post(
-      `/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`,
-      {
-        body: inputs.body
-      },
-      {
-        headers: {authorization: `token ${inputs.token}`}
+    if (envVar('INPUT_GITHUB-TOKEN')) {
+      const inputs = {
+        token: requireEnvVar('INPUT_GITHUB-TOKEN'),
+        body: comment
       }
-    )
+      core.debug(`Inputs: ${JSON.stringify(inputs, null, 4)}`)
+
+      const sha = process.env.GITHUB_SHA
+      core.debug(`SHA: ${sha}`)
+
+      await axios.post(
+        `/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`,
+        {
+          body: inputs.body
+        },
+        {
+          headers: {authorization: `token ${inputs.token}`}
+        }
+      )
+    } else {
+      logWarn(
+        'Could not comment on commit with deployment information because your github token was not found. If you would like this feature please add " with: github-token: "<token>" " to your github actions .yml file'
+      )
+    }
   } catch (error) {
     core.debug(JSON.stringify(error, null, 4))
     core.setFailed(error.message)
