@@ -44,6 +44,8 @@ Add the following to your .github/workflows/*.yml file
     branch: docs
     github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
+You will now see the deployment information in your action logs, as well as a comment on the individual commit with the deployment information.
+Note, the github-token input is only required to add the commit comment. If you do not feel comfortable handing out the github token, you can simply remove it and it will still deploy the site but will not comment the deployment information on your commit.
 
 
 
