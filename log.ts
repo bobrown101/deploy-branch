@@ -8,8 +8,10 @@ export const logWarn = (msg: string): void => {
   console.info(`${emoji.get('cop')} ${msg}`)
 }
 
-export const logSuccess = (msg: string): void => {
-  console.log(`${emoji.get('ship')} ${msg}`)
+export const logSuccess = (msg: string): string => {
+  const result = `${emoji.get('ship')} ${msg}`
+  console.log(result)
+  return result
 }
 
 export const logError = (msg: string): void => {
