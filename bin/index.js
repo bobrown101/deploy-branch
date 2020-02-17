@@ -4146,7 +4146,7 @@ const commentOnCommit = (comment) => __awaiter(void 0, void 0, void 0, function*
             core.debug(`Inputs: ${JSON.stringify(inputs, null, 4)}`);
             const sha = process.env.GITHUB_SHA;
             core.debug(`SHA: ${sha}`);
-            yield axios_1.default.post(`/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`, {
+            yield axios_1.default.post(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`, {
                 body: inputs.body
             }, {
                 headers: { authorization: `token ${inputs.token}` }

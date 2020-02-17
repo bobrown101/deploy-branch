@@ -19,8 +19,8 @@ const requireEnvVar = (envVar: string): string => {
   }
 }
 
-const envVar = (envVar: string): string | undefined => {
-  return process.env[envVar]
+const envVar = (lookupVar: string): string | undefined => {
+  return process.env[lookupVar]
 }
 
 const runCommand = (cmd: string, errorMsg?: string): string => {
@@ -75,7 +75,7 @@ const commentOnCommit = async (comment: string): Promise<void> => {
       core.debug(`SHA: ${sha}`)
 
       await axios.post(
-        `/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`,
+        `https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}/commits/${sha}/comments`,
         {
           body: inputs.body
         },
