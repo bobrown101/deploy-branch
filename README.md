@@ -1,4 +1,7 @@
 # deploy-branch
+Github pages for third party hosting providers
+
+
 Do you have a branch on your github repo that you want to deploy?
 Maybe you have a "docs" branch that you want to host for free?
 "deploy-branch" is a simple github action that will automatically deploy your desired branch to a hosting provider on every commit.
@@ -32,7 +35,7 @@ Site ID:   **SITE ID**
 To deploy to this site. Run your site build and then netlify deploy
 ```
 #### 3 - Update your workflow
-* Assuming the branch you would like to deploy is "docs"
+* Assuming the branch you would like to deploy is named "docs"
 Add the following to your .github/workflows/*.yml file
 ```
 - name: Deploy docs
