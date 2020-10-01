@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/bobrown101/deploy-branch#readme",
   "dependencies": {
-    "@actions/core": "^1.2.0",
+    "@actions/core": "^1.2.6",
     "@types/axios": "^0.14.0",
     "@types/node-emoji": "^1.8.1",
     "axios": "^0.19.2",
